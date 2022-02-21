@@ -1,0 +1,5 @@
+if empty(glob('~/.vim/tmp'))
+	silent !mkdir -p ~/.vim/tmp
+endif
+set swapfile
+set directory=$HOME/.vim/tmp

@@ -1,0 +1,25 @@
+version: "3.3"
+services:
+  go-dev:
+    build: services/go-dev
+    environment:
+      - "ROOT_ASKPASS=${ROOT_ASKPASS}"
+    hostname: go-dev
+    volumes:
+      - ./repo:/home/dev/repo
+      - ./scripts:/home/dev/scripts
+    privileged: true
+    ports:
+      - "22"
+      - "8080"
+    healthcheck:
+      test:
+        - CMD
+        - bash
+        - -c
+        - echo hello
+      interval: 30s
+      timeout: 5s
+      retries: 3
+volumes:
+  dev-data: {}
