@@ -4,6 +4,9 @@ services:
     build: services/go-dev
     environment:
       - "ROOT_ASKPASS=${ROOT_ASKPASS}"
+      - "ROOT_GIT_TOKEN=${ROOT_GIT_TOKEN}"
+      - "ROOT_GIT_EMAIL=${ROOT_GIT_EMAIL}"
+      - "ROOT_GIT_USER=${ROOT_GIT_USER}"
     hostname: go-dev
     volumes:
       - ./repo:/home/dev/repo

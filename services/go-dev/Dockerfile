@@ -104,6 +104,7 @@ RUN apt-get update && apt install ./trivy_${TRIVY_VERSION}_Linux-64bit.deb
 ENV ENV_TYPE dev-env
 RUN echo "export ENV_TYPE=${ENV_TYPE}" >> /etc/profile.d/env.sh
 
-# RUN echo "/home/dev/scripts/add_key" >> /home/dev/.bashrc
+RUN echo "/home/dev/scripts/add_key" >> /home/dev/.profile
+RUN echo "/home/dev/scripts/add_gitconfig" >> /home/dev/.profile
       
 CMD ["sbin/init"]

@@ -1,0 +1,10 @@
+#!/bin/bash
+
+cat > /home/dev/.gitconfig << EOF
+[user]
+    email = ${ROOT_GIT_EMAIL}
+    user = ${ROOT_GIT_USER}
+
+[url "https://${ROOT_GIT_USER}:${ROOT_GIT_TOKEN}@github.com"]
+	insteadOf = https://github.com
+EOF
