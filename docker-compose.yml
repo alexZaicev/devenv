@@ -41,7 +41,7 @@ services:
   redis-dev:
     hostname: redis-dev
     image: redis:latest
-    command: "redis-server --apendonly yes"
+    command: "redis-server --appendonly yes"
     ports:
       - "6379"
     volumes:

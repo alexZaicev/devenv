@@ -90,12 +90,12 @@ RUN echo "export POSTGRES_USER=${POSTGRES_USER}" >> /etc/profile.d/pg.sh
 RUN echo "export POSTGRES_DB=${POSTGRES_DB}" >> /etc/profile.d/pg.sh
 
 # INSTALL REDIS CLI
-RUN set -eux;
+RUN set -eux; \
 	apt-get update; \
 	apt-get install -y --no-install-recommends redis-tools;
 	
 # INSTALL GO AND TOOLING
-ENV GOLANG_VERSION 1.18rc1
+ENV GOLANG_VERSION 1.16
 RUN set -eux; \
 	cd /tmp; \
 	wget https://go.dev/dl/go${GOLANG_VERSION}.linux-amd64.tar.gz; \
@@ -116,17 +116,23 @@ RUN set -eux; \
 RUN curl -aSfl https://raw.githubusercontent.com/golangci/golangci-lint/master/install.sh | sh -s -- -b $(go env GOROOT)/bin v1.44.2
 COPY files/golangci.yml /home/dev/.golangci.yml
 
-RUN go install github.com/vektra/mockery/v2@latest
-RUN go install github.com/google/wire/cmd/wire@latest
-RUN go install github.com/jfeliu007/goplantuml/cmd/goplantuml@latest
-RUN go install golang.org/x/tools/cmd/goimports@latest
-RUN go install github.com/daixiang0/gci@latest
+ENV ROOT_MOCKERY_VERSION v2.10.0
+ENV ROOT_WIRE_VERSION v0.5.0
+ENV ROOT_GOPLANTUML_VERSION v1.5.2
+ENV ROOT_GOIMPORTS_VERSION v0.1.9
+ENV ROOT_GCI_VERSION v0.3.1
+
+RUN go install github.com/vektra/mockery/v2@${ROOT_MOCKERY_VERSION}
+RUN go install github.com/google/wire/cmd/wire@${ROOT_WIRE_VERSION}
+RUN go install github.com/jfeliu007/goplantuml/cmd/goplantuml@${ROOT_GOPLANTUML_VERSION}
+RUN go install golang.org/x/tools/cmd/goimports@${ROOT_GOIMPORTS_VERSION}
+RUN go install github.com/daixiang0/gci@${ROOT_GCI_VERSION}
 
 # INSTALL TRIVY
 ENV TRIVY_VERSION 0.23.0
 RUN wget -nv https://github.com/aquasecurity/trivy/releases/download/v${TRIVY_VERSION}/trivy_${TRIVY_VERSION}_Linux-64bit.deb
 RUN set -eux; \
-	apt-get update; \ 
+	apt-get update; \
 	apt install ./trivy_${TRIVY_VERSION}_Linux-64bit.deb;
 
 # SET ENV TYPE
