@@ -11,18 +11,48 @@ services:
     volumes:
       - ./repo:/home/dev/repo
       - ./scripts:/home/dev/scripts
+      - go-dev-data:/usr/local/lib/go-dev
     privileged: true
     ports:
       - "22"
       - "8080"
     healthcheck:
-      test:
-        - CMD
-        - bash
-        - -c
-        - echo hello
+      test: ["CMD", "bash", "-c", "echo hello"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+  pg-dev:
+    hostname: pg-dev
+    image: postgres:13.6
+    ports:
+      - "5432"
+    environment:
+      - POSTGRES_HOST_AUTH_METHOD=trust
+      - POSTGRES_USER=${POSTGRES_USER-postgres}
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD-mysecret}
+      - PGDATA=/var/lib/postgresql/data
+    volumes:
+      - pg-dev-data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD", "pg_isready", "-U", "postgres"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+  redis-dev:
+    hostname: redis-dev
+    image: redis:latest
+    command: "redis-server --apendonly yes"
+    ports:
+      - "6379"
+    volumes:
+      - redis-dev-data:/data
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
       interval: 30s
       timeout: 5s
       retries: 3
 volumes:
-  dev-data: {}
+  go-dev-data: {}
+  pg-dev-data: {}
+  redis-dev-data: {}
+  
