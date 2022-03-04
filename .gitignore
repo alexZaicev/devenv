@@ -1,3 +1,5 @@
 # IDE specifics
 .vscode/
 .idea/
+
+*.bak

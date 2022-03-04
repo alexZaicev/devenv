@@ -22,8 +22,10 @@ services:
       timeout: 5s
       retries: 3
   pg-dev:
+    build:
+        context: services/postgres
+        dockerfile: Dockerfile
     hostname: pg-dev
-    image: postgres:13.6
     ports:
       - "5432"
     environment:
@@ -34,27 +36,30 @@ services:
     volumes:
       - pg-dev-data:/var/lib/postgresql/data
     healthcheck:
-      test: ["CMD", "pg_isready", "-U", "postgres"]
-      interval: 30s
-      timeout: 5s
-      retries: 3
+      test: ["CMD", "postgres-healthcheck"]
+      interval: 10s
+      timeout: 10s
+      retries: 5
   redis-dev:
+    build:
+        context: services/redis
+        dockerfile: Dockerfile
     hostname: redis-dev
-    image: redis:latest
     command: "redis-server --appendonly yes"
     ports:
       - "6379"
     volumes:
       - redis-dev-data:/data
     healthcheck:
-      test: ["CMD", "redis-cli", "ping"]
-      interval: 30s
-      timeout: 5s
-      retries: 3
+      test: ["CMD", "redis-healthcheck"]
+      interval: 10s
+      timeout: 10s
+      retries: 5
   mongo-dev:
+    build:
+        context: services/mongo
+        dockerfile: Dockerfile
     hostname: mongo-dev
-    image: mongo:latest
-    restart: always
     ports:
       - "27017-27019"
     volumes:
@@ -63,7 +68,7 @@ services:
       MONGO_INITDB_ROOT_USERNAME: ${MONGO_INITDB_ROOT_USERNAME-root}
       MONGO_INITDB_ROOT_PASSWORD: ${MONGO_INITDB_ROOT_PASSWORD-example}
     healthcheck:
-      test: "echo 'db.getMongo()' | mongo --norc --quiet --host=hostname:27017"
+      test: ["CMD", "mongo-healthcheck"]
       interval: 10s
       timeout: 10s
       retries: 5
