@@ -93,6 +93,11 @@ RUN echo "export POSTGRES_DB=${POSTGRES_DB}" >> /etc/profile.d/pg.sh
 RUN set -eux; \
 	apt-get update; \
 	apt-get install -y --no-install-recommends redis-tools;
+
+# INSTALL MONGO CLI
+RUN set -eux; \
+    apt-get update; \
+    apt-get install -y --no-install-recommends mongocli;
 	
 # INSTALL GO AND TOOLING
 ENV GOLANG_VERSION 1.16

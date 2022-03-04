@@ -1,4 +1,4 @@
-version: "3.3"
+version: "3.5"
 services:
   go-dev:
     build: services/go-dev
@@ -51,8 +51,25 @@ services:
       interval: 30s
       timeout: 5s
       retries: 3
+  mongo-dev:
+    hostname: mongo-dev
+    image: mongo:latest
+    restart: always
+    ports:
+      - "27017-27019"
+    volumes:
+      - mongo-dev-data:/data/db
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: ${MONGO_INITDB_ROOT_USERNAME-root}
+      MONGO_INITDB_ROOT_PASSWORD: ${MONGO_INITDB_ROOT_PASSWORD-example}
+    healthcheck:
+      test: "echo 'db.getMongo()' | mongo --norc --quiet --host=hostname:27017"
+      interval: 10s
+      timeout: 10s
+      retries: 5
 volumes:
   go-dev-data: {}
   pg-dev-data: {}
   redis-dev-data: {}
+  mongo-dev-data: {}
   
