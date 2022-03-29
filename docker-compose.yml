@@ -16,6 +16,8 @@ services:
     ports:
       - "22"
       - "8080"
+      - "8383:8383"
+    expose: [8383]
     healthcheck:
       test: ["CMD", "bash", "-c", "echo hello"]
       interval: 30s

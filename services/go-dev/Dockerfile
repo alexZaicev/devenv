@@ -1,4 +1,4 @@
-FROM ubuntu:latest
+FROM ubuntu:20.04
 
 LABEL maintainer="alex.zaicef@gmail.com"
 
@@ -156,6 +156,7 @@ ENV ROOT_PROTOBUF_VERSION v1.27.1
 ENV ROOT_PROTOC_GEN_GO_GRPC_VERSION v1.1.0
 ENV ROOT_PROTOC_GEN_DOC_VERSION v1.4.1
 ENV ROOT_PROTOC_GEN_VALIDATE_VERSION v0.6.1
+ENV ROOT_DELVE_VERSION v1.8.2
 
 RUN set -eux; \
 	go install github.com/vektra/mockery/v2@${ROOT_MOCKERY_VERSION} ; \
@@ -166,7 +167,8 @@ RUN set -eux; \
 	go install google.golang.org/protobuf/cmd/protoc-gen-go@${ROOT_PROTOBUF_VERSION} ; \
 	go install google.golang.org/grpc/cmd/protoc-gen-go-grpc@${ROOT_PROTOC_GEN_GO_GRPC_VERSION} ; \
 	go install github.com/pseudomuto/protoc-gen-doc/cmd/protoc-gen-doc@${ROOT_PROTOC_GEN_DOC_VERSION} ; \
-	go install github.com/envoyproxy/protoc-gen-validate@${ROOT_PROTOC_GEN_VALIDATE_VERSION} ;
+	go install github.com/envoyproxy/protoc-gen-validate@${ROOT_PROTOC_GEN_VALIDATE_VERSION} ; \
+	go install github.com/go-delve/delve/cmd/dlv@${ROOT_DELVE_VERSION} ;
 
 # INSTALL TRIVY
 ENV TRIVY_VERSION 0.23.0
