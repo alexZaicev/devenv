@@ -96,8 +96,34 @@ RUN set -eux; \
 
 # INSTALL MONGO CLI
 RUN set -eux; \
+    wget -qO - https://www.mongodb.org/static/pgp/server-5.0.asc | sudo apt-key add - ; \
+    echo "deb [ arch=amd64,arm64 ] https://repo.mongodb.org/apt/ubuntu focal/mongodb-org/5.0 multiverse" | sudo tee /etc/apt/sources.list.d/mongodb-org-5.0.list ; \
     apt-get update; \
     apt-get install -y --no-install-recommends mongocli;
+	
+# INSTALL PROTOC
+ENV PROTO_C_VERSION 3.19.4
+ENV PROTO_C_FILE protoc-${PROTO_C_VERSION}-linux-x86_64.zip
+RUN set -eux; \
+	curl -LO https://github.com/protocolbuffers/protobuf/releases/download/v${PROTO_C_VERSION}/${PROTO_C_FILE} ; \
+	unzip -X ${PROTO_C_FILE} -d /usr/local ; \
+	chmod +x /usr/local/bin/protoc ; \
+	chmod +rwx -R /usr/local/include ; \
+	rm -f ${PROTO_C_FILE} ;
+	
+# INSTALL BUF
+ENV BUF_VERSION 1.1.0
+ENV BUF_FILE buf-Linux-x86_64.tar.gz
+RUN set -eux; \
+	curl -LO https://github.com/bufbuild/buf/releases/download/v${BUF_VERSION}/${BUF_FILE} ; \
+	tar -xzf ${BUF_FILE} -C /usr/local --strip-components 1 ;
+	
+# INSTALL gRPCurl
+ENV GRPCURL_VERSION 1.8.6
+ENV GRPCURL_FILE grpcurl_${GRPCURL_VERSION}_linux_x86_64.tar.gz
+RUN set -eux; \
+	curl -LO https://github.com/fullstorydev/grpcurl/releases/download/v${GRPCURL_VERSION}/${GRPCURL_FILE} ; \
+	tar -xzf ${GRPCURL_FILE} -C /usr/local/bin;
 	
 # INSTALL GO AND TOOLING
 ENV GOLANG_VERSION 1.16
@@ -126,12 +152,21 @@ ENV ROOT_WIRE_VERSION v0.5.0
 ENV ROOT_GOPLANTUML_VERSION v1.5.2
 ENV ROOT_GOIMPORTS_VERSION v0.1.9
 ENV ROOT_GCI_VERSION v0.3.1
+ENV ROOT_PROTOBUF_VERSION v1.27.1
+ENV ROOT_PROTOC_GEN_GO_GRPC_VERSION v1.1.0
+ENV ROOT_PROTOC_GEN_DOC_VERSION v1.4.1
+ENV ROOT_PROTOC_GEN_VALIDATE_VERSION v0.6.1
 
-RUN go install github.com/vektra/mockery/v2@${ROOT_MOCKERY_VERSION}
-RUN go install github.com/google/wire/cmd/wire@${ROOT_WIRE_VERSION}
-RUN go install github.com/jfeliu007/goplantuml/cmd/goplantuml@${ROOT_GOPLANTUML_VERSION}
-RUN go install golang.org/x/tools/cmd/goimports@${ROOT_GOIMPORTS_VERSION}
-RUN go install github.com/daixiang0/gci@${ROOT_GCI_VERSION}
+RUN set -eux; \
+	go install github.com/vektra/mockery/v2@${ROOT_MOCKERY_VERSION} ; \
+	go install github.com/google/wire/cmd/wire@${ROOT_WIRE_VERSION} ; \
+	go install github.com/jfeliu007/goplantuml/cmd/goplantuml@${ROOT_GOPLANTUML_VERSION} ; \
+	go install golang.org/x/tools/cmd/goimports@${ROOT_GOIMPORTS_VERSION} ; \
+	go install github.com/daixiang0/gci@${ROOT_GCI_VERSION} ; \
+	go install google.golang.org/protobuf/cmd/protoc-gen-go@${ROOT_PROTOBUF_VERSION} ; \
+	go install google.golang.org/grpc/cmd/protoc-gen-go-grpc@${ROOT_PROTOC_GEN_GO_GRPC_VERSION} ; \
+	go install github.com/pseudomuto/protoc-gen-doc/cmd/protoc-gen-doc@${ROOT_PROTOC_GEN_DOC_VERSION} ; \
+	go install github.com/envoyproxy/protoc-gen-validate@${ROOT_PROTOC_GEN_VALIDATE_VERSION} ;
 
 # INSTALL TRIVY
 ENV TRIVY_VERSION 0.23.0

@@ -3,3 +3,7 @@
 .idea/
 
 *.bak
+
+# Ignore contents of repo and scripts directory
+repo/
+scripts/
